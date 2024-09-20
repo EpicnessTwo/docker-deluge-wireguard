@@ -34,6 +34,6 @@ fi
 ip route add "${LOCAL_NETWORK}" via "${DEFAULT_GW}" dev "${DEFAULT_INT}"
 
 # Set deluge configs
-su -s /bin/sh debian-deluged -c VPN_INTERFACE_IP="${VPN_INTERFACE_IP}" set-deluge-config.py
+su -s /bin/sh debian-deluged -c VPN_INTERFACE_IP="${VPN_INTERFACE_IP}"
 
 exec "$@"

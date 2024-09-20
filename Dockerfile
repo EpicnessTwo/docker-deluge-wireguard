@@ -1,4 +1,4 @@
-FROM ubuntu:18.04
+FROM ubuntu:22.04
 
 ARG DEBIAN_FRONTEND=noninteractive
 ARG DELUGED_HOME=/var/lib/deluged
@@ -13,7 +13,7 @@ EXPOSE 58846
 ENV DELUGE_CONFIG_DIR=/config
 ENV DELUGE_DATA_DIR=/data
 ENV WG_I_NAME=wg0
-#ENV LOCAL_NETWORK=192.168.1.0/24
+ENV LOCAL_NETWORK=192.168.0.0/16
 ENV DELUGE_UMASK=022
 ENV DELUGE_WEB_UMASK=027
 
@@ -27,8 +27,8 @@ RUN apt-get update && \
         software-properties-common \
         locales && \
     locale-gen ${LANG} && \
-    add-apt-repository -y ppa:deluge-team/stable && \
-    apt-get update && \
+#    add-apt-repository -y ppa:deluge-team/stable && \
+#    apt-get update && \
     apt-get install -y --no-install-recommends \
         wireguard \
         deluged \
@@ -44,7 +44,7 @@ RUN apt-get update && \
         vim && \
     rm -rf /var/lib/apt/lists/*
 
-RUN useradd --home "${DELUGED_HOME}" debian-deluged
+#RUN useradd --home "${DELUGED_HOME}" debian-deluged
 
 # Link default config dir to root
 RUN ln -s /var/lib/deluged "${DELUGE_CONFIG_DIR}"
@@ -57,10 +57,9 @@ RUN mkdir -p "${DELUGE_DATA_DIR}" "${DELUGED_HOME}" && \
         "${DELUGE_DATA_DIR}" \
         "${DELUGED_HOME}"
 
-COPY scripts/* /usr/local/bin/
 COPY entrypoint.sh /entrypoint.sh
 
-RUN chmod +x /usr/local/bin/set-deluge-config.py /entrypoint.sh
+RUN chmod +x /entrypoint.sh
 
 # Supervisord config
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
